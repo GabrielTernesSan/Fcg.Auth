@@ -1,15 +1,15 @@
-# fcg-auth
+# Fcg.Auth
 
 Estrutura base de um projeto .NET (Clean Architecture / DDD)
 
 ## Estrutura
 ```
-fcg-auth/
+Fcg.Auth/
  ├── src/
- │   ├── fcg-auth.Domain/
- │   ├── fcg-auth.Application/
- │   ├── fcg-auth.Infra/
- │   └── fcg-auth.Web/
+ │   ├── Fcg.Auth.Domain/
+ │   ├── Fcg.Auth.Application/
+ │   ├── Fcg.Auth.Infra/
+ │   └── Fcg.Auth.Web/
  └── tests/
-     └── fcg-auth.Tests/
+     └── Fcg.Auth.Tests/
 ```
