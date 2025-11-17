@@ -1,0 +1,85 @@
+## .NET / C# / Visual Studio
+
+# Usuário
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+# Visual Studio
+.vs/
+
+# Cache e temporários
+*.cache
+*.dbmdl
+*.pdb
+*.tmp
+*.temp
+*.log
+
+# Testes e cobertura
+*.trx
+*.coverage
+*.coveragexml
+*.nunit.xml
+BenchmarkDotNet.Artifacts/
+
+# Configurações locais e backups
+*.pidb
+*.svclog
+*.scc
+*.bak
+*.backup
+
+# NuGet
+*.nupkg
+*.snupkg
+*.nuget.props
+*.nuget.targets
+.nuget/
+packages/
+**/packages/*
+!**/packages/build/
+!**/packages/repositories.config
+
+# Publicação
+*.pubxml
+*.publishsettings
+**/Properties/PublishProfiles/
+
+# Banco local
+*.mdf
+*.ldf
+
+# Ambiente
+.env
+.env.*
+
+# IIS Express
+iisexpress/
+applicationhost.config
+
+# Windows
+[Dd]esktop.ini
+[Tt]humbs.db
+ehthumbs.db
+$RECYCLE.BIN/
+
+# Editor
+.idea/
+.vscode/
+*.DotSettings.user
+.editorconfig
+
+# Histórico
+*.orig
+*.rej

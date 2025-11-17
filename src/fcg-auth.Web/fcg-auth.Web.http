@@ -1,0 +1,6 @@
+@fcg_auth.Web_HostAddress = http://localhost:5027
+
+GET {{fcg_auth.Web_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
