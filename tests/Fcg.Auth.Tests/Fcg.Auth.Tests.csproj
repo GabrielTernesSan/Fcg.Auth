@@ -20,9 +20,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\fcg-auth.Domain\fcg-auth.Domain.csproj" />
-    <ProjectReference Include="..\..\src\fcg-auth.Application\fcg-auth.Application.csproj" />
-    <ProjectReference Include="..\..\src\fcg-auth.Infra\fcg-auth.Infra.csproj" />
+    <ProjectReference Include="..\..\src\Fcg.Auth.Domain\Fcg.Auth.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Fcg.Auth.Application\Fcg.Auth.Application.csproj" />
+    <ProjectReference Include="..\..\src\Fcg.Auth.Infra\Fcg.Auth.Infra.csproj" />
   </ItemGroup>
 
 </Project>
