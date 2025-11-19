@@ -13,3 +13,4 @@ Fcg.Auth/
  └── tests/
      └── Fcg.Auth.Tests/
 ```
+<img width="1583" height="732" alt="image" src="https://github.com/user-attachments/assets/9a93f8fb-0220-4bcd-8405-38cec927c8ed" />
