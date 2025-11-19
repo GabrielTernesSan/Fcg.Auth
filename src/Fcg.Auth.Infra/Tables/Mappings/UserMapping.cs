@@ -12,6 +12,8 @@ namespace Fcg.Auth.Infra.Tables.Mappings
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).IsRequired().ValueGeneratedNever();
 
+            builder.HasIndex(x => x.Email).IsUnique();
+
             builder.Property(x => x.Email)
                 .IsRequired()
                 .HasMaxLength(100);

@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Fcg.Auth.Application.Requests
 {
-    public class LoginRequest : IRequest<Response>
+    public class LoginRequest : IRequest<Response<string>>
     {
         public string Email { get; set; } = null!;
         public string Password { get; set; } = null!;

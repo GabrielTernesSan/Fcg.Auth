@@ -1,3 +1,4 @@
+using Fcg.Auth.Domain;
 using Fcg.Auth.Domain.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -16,13 +17,13 @@ namespace Fcg.Auth.Application.Services
             _configuration = configuration;
         }
 
-        public string GenerateToken(string email, string role)
+        public string GenerateToken(User user)
         {
             var claims = new[]
             {
-            new Claim(JwtRegisteredClaimNames.Sub, email),
-            new Claim(ClaimTypes.Role, role),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                new Claim(ClaimTypes.Role, user.Role)
         };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));

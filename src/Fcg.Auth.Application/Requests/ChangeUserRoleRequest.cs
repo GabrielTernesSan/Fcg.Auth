@@ -6,7 +6,6 @@ namespace Fcg.Auth.Application.Requests
 {
     public class ChangeUserRoleRequest : IRequest<Response>
     {
-        public Guid PerformerId { get; set; }
         public Guid TargetUserId { get; set; }
         public string NewRole { get; set; } = null!;
     }
@@ -15,8 +14,6 @@ namespace Fcg.Auth.Application.Requests
     {
         public ChangeUserRoleRequestValidator()
         {
-            RuleFor(x => x.PerformerId)
-                .NotEmpty().WithMessage("O ID do usuário executor é obrigatório.");
             RuleFor(x => x.TargetUserId)
                 .NotEmpty().WithMessage("O ID do usuário alvo é obrigatório.");
             RuleFor(x => x.NewRole)

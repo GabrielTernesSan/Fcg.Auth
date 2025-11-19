@@ -1,22 +1,20 @@
+using Fcg.Auth.Application;
 using Fcg.Auth.Application.Requests;
-using Fcg.Auth.Application.Services;
-using Fcg.Auth.Common;
-using Fcg.Auth.Domain.Repositories;
-using Fcg.Auth.Domain.Services;
 using Fcg.Auth.Infra;
-using FluentValidation;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-#region Services Configuration
+builder.Services.AddApplicationLayer();
+builder.Services.AddInfraLayer(builder.Configuration);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddHttpContextAccessor();
 
 #region Swagger Configuration
 builder.Services.AddSwaggerGen(c =>
@@ -48,16 +46,6 @@ builder.Services.AddSwaggerGen(c =>
 });
 #endregion
 
-#region Database
-builder.Services.AddDbContext<FcgAuthDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-#endregion
-
-#region MediatR
-builder.Services.AddMediatR(fcg =>
-    fcg.RegisterServicesFromAssemblyContaining<RegisterUserRequest>());
-#endregion
-
 #region Authentication & Authorization
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
@@ -81,110 +69,49 @@ builder.Services.AddAuthorization(options =>
 });
 #endregion
 
-#region Repositories
-builder.Services.AddScoped<IAuthUserRepository, AuthUserRepository>();
-#endregion
-
-#region Domain Services
-builder.Services.AddScoped<IPasswordHasherService, PasswordHasherService>();
-builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
-builder.Services.AddValidatorsFromAssemblyContaining<RegisterUserRequest>();
-#endregion
-
-#endregion
-
 var app = builder.Build();
 
 #region Minimal APIs
-
-#region Auth Endpoints
-app.MapPost("/api/auth", async (RegisterUserRequest request, IValidator<RegisterUserRequest> validator, IMediator _mediator) =>
+app.MapPost("/api/create-account", async (RegisterUserRequest request, IMediator mediator) =>
 {
-    var response = new Response();
+    var result = await mediator.Send(request);
 
-    var validationResult = await validator.ValidateAsync(request);
+    return result.HasErrors
+        ? Results.BadRequest(result)
+        : Results.Ok(result);
+}).AllowAnonymous()
+.WithTags("Auth");
 
-    if (!validationResult.IsValid)
-    {
-        foreach (var error in validationResult.Errors)
-            response.AddError(error.ErrorMessage);
-        return Results.BadRequest(response);
-    }
-
-    response.Append(await _mediator.Send(request));
-
-    return Results.Ok(response);
-}).AllowAnonymous().WithTags("Auth");
-
-app.MapPut("/api/auth/role", async (ChangeUserRoleRequest request, IValidator<ChangeUserRoleRequest> validator, IMediator _mediator) =>
+app.MapPut("/api/auth/role", async (ChangeUserRoleRequest request, IMediator mediator) =>
 {
-    var response = new Response();
+    var result = await mediator.Send(request);
 
-    var validationResult = await validator.ValidateAsync(request);
+    return result.HasErrors
+        ? Results.BadRequest(result)
+        : Results.Ok(result);
+}).RequireAuthorization("AdminPolicy")
+.WithTags("Auth");
 
-    if (!validationResult.IsValid)
-    {
-        foreach (var error in validationResult.Errors)
-            response.AddError(error.ErrorMessage);
-        return Results.BadRequest(response);
-    }
-
-    response.Append(await _mediator.Send(request));
-
-    return Results.Ok(response);
-}).RequireAuthorization("AdminPolicy").WithTags("Auth");
-
-app.MapPost("/api/login", async (LoginRequest request, IValidator<LoginRequest> validator, IMediator _mediator) =>
+app.MapPost("/api/login", async (LoginRequest request, IMediator mediator) =>
 {
-    var response = new Response();
+    var result = await mediator.Send(request);
 
-    var validationResult = await validator.ValidateAsync(request);
-
-    if (!validationResult.IsValid)
-    {
-        foreach (var error in validationResult.Errors)
-            response.AddError(error.ErrorMessage);
-        return Results.BadRequest(response);
-    }
-
-    response.Append(await _mediator.Send(request));
-
-    return Results.Ok(response);
-}).AllowAnonymous().WithTags("Auth");
-
-//app.MapGet("/api/users", async (IUserQuery _userQuery) =>
-//{
-//    var users = await _userQuery.GetAllUsersAsync();
-
-//    return users is not null ? Results.Ok(users) : Results.NotFound();
-//}).RequireAuthorization("AdminPolicy").WithTags("Users");
-
-//app.MapGet("/api/users/{id}", async (Guid id, IUserQuery _userQuery) =>
-//{
-//    var user = await _userQuery.GetByIdUserAsync(id);
-
-//    return user is not null ? Results.Ok(user) : Results.NotFound();
-//}).RequireAuthorization().WithTags("Users");
+    return result.HasErrors
+        ? Results.BadRequest(result)
+        : Results.Ok(result);
+})
+.AllowAnonymous();
 #endregion
 
 #region Middleware Pipeline
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
-app.UseLogMiddleware();
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
-
-#endregion
-
 app.Run();
 #endregion

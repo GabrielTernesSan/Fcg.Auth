@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Fcg.Auth.Application.Handlers
 {
-    public class LoginHandler : IRequestHandler<LoginRequest, Response>
+    public class LoginHandler : IRequestHandler<LoginRequest, Response<string>>
     {
         private readonly IAuthUserRepository _userRepository;
         private readonly IPasswordHasherService _passwordHasherService;
@@ -22,9 +22,9 @@ namespace Fcg.Auth.Application.Handlers
             _jwtTokenService = jwtTokenService;
         }
 
-        public async Task<Response> Handle(LoginRequest request, CancellationToken cancellationToken)
+        public async Task<Response<string>> Handle(LoginRequest request, CancellationToken cancellationToken)
         {
-            var response = new Response();
+            var response = new Response<string>();
 
             var user = await _userRepository.GetUserByEmailAsync(request.Email);
 
@@ -36,19 +36,11 @@ namespace Fcg.Auth.Application.Handlers
                 return response;
             }
 
-            var token = _jwtTokenService.GenerateToken(user.Email, user.Role);
+            response.Result = _jwtTokenService.GenerateToken(user);
 
             _logger.LogInformation("Usuário {Email} logado com sucesso.", user.Email);
 
-            // TODO: Ver como retorno esse cara
-            return new LoginResponse
-            {
-                Success = true,
-                Token = token,
-                UserId = user.Id,
-                Email = user.Email,
-                Message = "Login realizado com sucesso!"
-            };
+            return response;
         }
     }
 }
