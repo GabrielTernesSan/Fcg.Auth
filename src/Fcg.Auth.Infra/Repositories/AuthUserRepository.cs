@@ -50,15 +50,28 @@ namespace Fcg.Auth.Infra.Repositories
                 : new User(entity.Id, entity.Email, entity.PasswordHash, entity.Role);
         }
 
-        public async Task UpdateUserRoleAsync(User user)
+        public async Task UpdateUserAsync(User user)
         {
             var entity = await _context.Users.FindAsync(user.Id)
                 ?? throw new InvalidOperationException(
                     $"Usuário com Id {user.Id} não encontrado para atualizar a politica de permissões.");
 
             entity.Role = user.Role;
+            entity.Email = user.Email;
 
             _context.Users.Update(entity);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteUserAsync(Guid id)
+        {
+            var entity = new Tables.User
+            {
+                Id = id
+            };
+
+            _context.Users.Remove(entity);
+
             await _context.SaveChangesAsync();
         }
     }

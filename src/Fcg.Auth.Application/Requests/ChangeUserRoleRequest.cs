@@ -6,7 +6,7 @@ namespace Fcg.Auth.Application.Requests
 {
     public class ChangeUserRoleRequest : IRequest<Response>
     {
-        public Guid TargetUserId { get; set; }
+        public Guid UserId { get; set; }
         public string NewRole { get; set; } = null!;
     }
 
@@ -14,7 +14,7 @@ namespace Fcg.Auth.Application.Requests
     {
         public ChangeUserRoleRequestValidator()
         {
-            RuleFor(x => x.TargetUserId)
+            RuleFor(x => x.UserId)
                 .NotEmpty().WithMessage("O ID do usuário alvo é obrigatório.");
             RuleFor(x => x.NewRole)
                 .NotEmpty().WithMessage("A nova função é obrigatória.");

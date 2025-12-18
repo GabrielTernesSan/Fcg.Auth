@@ -32,13 +32,13 @@ public class ChangeUserRoleHandler : IRequestHandler<ChangeUserRoleRequest, Resp
             return response;
         }
 
-        if (performer.Id == request.TargetUserId)
+        if (performer.Id == request.UserId)
         {
             response.AddError("Você não pode alterar seu próprio papel.");
             return response;
         }
 
-        var targetUser = await _authUserRepository.GetUserByIdAsync(request.TargetUserId);
+        var targetUser = await _authUserRepository.GetUserByIdAsync(request.UserId);
 
         if (targetUser == null)
         {
@@ -48,7 +48,7 @@ public class ChangeUserRoleHandler : IRequestHandler<ChangeUserRoleRequest, Resp
 
         targetUser.SetRole(request.NewRole);
 
-        await _authUserRepository.UpdateUserRoleAsync(targetUser);
+        await _authUserRepository.UpdateUserAsync(targetUser);
 
         return response;
     }

@@ -1,7 +1,11 @@
 using Fcg.Auth.Application;
 using Fcg.Auth.Application.Requests;
+using Fcg.Auth.Common;
+using Fcg.Auth.Domain.Queries;
 using Fcg.Auth.Infra;
+using Fcg.Auth.Infra.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -82,23 +86,43 @@ app.MapPost("/api/create-account", async (RegisterUserRequest request, IMediator
 }).AllowAnonymous()
 .WithTags("Auth");
 
-app.MapPut("/api/auth/role", async (ChangeUserRoleRequest request, IMediator mediator) =>
+app.MapGet("/api/auth/users/{id}/email", async (Guid id, IAuthQuery _authQuery) =>
 {
-    var result = await mediator.Send(request);
+    var response = await _authQuery.GetEmailByUserIdAsync(id);
 
-    return result.HasErrors
-        ? Results.BadRequest(result)
-        : Results.Ok(result);
-}).RequireAuthorization("AdminPolicy")
+    return Results.Ok(response);
+}).AllowAnonymous().WithTags("Auth");
+
+app.MapDelete("/api/auth/users/{id}", async (Guid id, IMediator mediator) =>
+{
+    var response = await mediator.Send(new DeleteUserRequest { Id = id });
+
+    return Results.Ok(response);
+}).AllowAnonymous().WithTags("Auth");
+
+app.MapPut("/api/auth/role", async ([FromBody] ChangeUserRoleRequest request, IMediator mediator) =>
+{
+    var response = await mediator.Send(request);
+
+    return Results.Ok(response);
+}).AllowAnonymous()
+.WithTags("Auth");
+
+app.MapPut("/api/auth/users/{id}/email", async (Guid id, [FromBody] ChangeUserEmailRequest request, IMediator mediator) =>
+{
+    request.UserId = id;
+
+    var response = await mediator.Send(request);
+
+    return Results.Ok(response);
+}).AllowAnonymous()
 .WithTags("Auth");
 
 app.MapPost("/api/login", async (LoginRequest request, IMediator mediator) =>
 {
-    var result = await mediator.Send(request);
+    var response = await mediator.Send(request);
 
-    return result.HasErrors
-        ? Results.BadRequest(result)
-        : Results.Ok(result);
+    return Results.Ok(response);
 })
 .AllowAnonymous();
 #endregion

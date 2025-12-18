@@ -4,21 +4,31 @@ using MediatR;
 namespace Fcg.Auth.Application.Behaviors
 {
     public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequest<TResponse>
+        where TRequest : IRequest<TResponse>
     {
-        private readonly IValidator<TRequest>? _validator;
+        private readonly IEnumerable<IValidator<TRequest>> _validators;
 
-        public ValidationBehavior(IValidator<TRequest>? validator)
-            => _validator = validator;
+        public ValidationBehavior(IEnumerable<IValidator<TRequest>> validators)
+            => _validators = validators;
 
         public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
-            if (_validator != null)
+            if (_validators.Any())
             {
-                var result = await _validator.ValidateAsync(request, cancellationToken);
-                if (!result.IsValid)
+                var context = new ValidationContext<TRequest>(request);
+
+                var validationResults = await Task.WhenAll(
+                    _validators.Select(v => v.ValidateAsync(context, cancellationToken))
+                );
+
+                var failures = validationResults
+                    .Where(r => r.Errors.Any())
+                    .SelectMany(r => r.Errors)
+                    .ToList();
+
+                if (failures.Any())
                 {
-                    throw new ValidationException(result.Errors);
+                    throw new ValidationException(failures);
                 }
             }
 

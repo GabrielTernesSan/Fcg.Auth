@@ -5,6 +5,7 @@ namespace Fcg.Auth.Domain.Repositories
         Task<User?> GetUserByEmailAsync(string email);
         Task<User?> GetUserByIdAsync(Guid id);
         Task<Guid> CreateUserAsync(User user);
-        Task UpdateUserRoleAsync(User user);
+        Task UpdateUserAsync(User user);
+        Task DeleteUserAsync(Guid id);
     }
 }
