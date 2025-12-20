@@ -1,7 +1,7 @@
-﻿using Fcg.Auth.Common;
-using Fcg.Auth.Proxy.User.Responses;
+using Fcg.Auth.Common;
+using Fcg.Auth.Proxy.User.Client.Responses;
 
-namespace Fcg.Auth.Proxy.User.Interface
+namespace Fcg.Auth.Proxy.User.Client.Interface
 {
     public interface IClientUser
     {

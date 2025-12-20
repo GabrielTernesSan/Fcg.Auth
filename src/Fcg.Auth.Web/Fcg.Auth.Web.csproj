@@ -21,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Fcg.Auth.Application\Fcg.Auth.Application.csproj" />
     <ProjectReference Include="..\Fcg.Auth.Infra\Fcg.Auth.Infra.csproj" />
+    <ProjectReference Include="..\Fcg.Auth.Proxy\Fcg.Auth.Proxy.User.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Options;
 
-namespace Fcg.Auth.Proxy.User
+namespace Fcg.Auth.Proxy.User.Configurations
 {
     public class UserConfigurationValidation : IValidateOptions<UserConfiguration>
     {

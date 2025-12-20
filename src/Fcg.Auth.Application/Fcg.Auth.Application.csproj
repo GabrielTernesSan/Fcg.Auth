@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Fcg.Auth.Common\Fcg.Auth.Common.csproj" />
     <ProjectReference Include="..\Fcg.Auth.Domain\Fcg.Auth.Domain.csproj" />
+    <ProjectReference Include="..\Fcg.Auth.Proxy\Fcg.Auth.Proxy.User.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

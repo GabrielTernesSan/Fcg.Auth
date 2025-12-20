@@ -1,6 +1,6 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
-namespace Fcg.Auth.Proxy.User.Responses
+namespace Fcg.Auth.Proxy.User.Client.Responses
 {
     public class CreateUserResponse
     {

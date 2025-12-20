@@ -1,9 +1,8 @@
 using Fcg.Auth.Application;
 using Fcg.Auth.Application.Requests;
-using Fcg.Auth.Common;
 using Fcg.Auth.Domain.Queries;
 using Fcg.Auth.Infra;
-using Fcg.Auth.Infra.Queries;
+using Fcg.Auth.Proxy.User;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -14,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApplicationLayer();
 builder.Services.AddInfraLayer(builder.Configuration);
+builder.Services.AddInfraProxyUser(builder.Configuration);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -76,7 +76,7 @@ builder.Services.AddAuthorization(options =>
 var app = builder.Build();
 
 #region Minimal APIs
-app.MapPost("/api/create-account", async (RegisterUserRequest request, IMediator mediator) =>
+app.MapPost("create-account", async (RegisterUserRequest request, IMediator mediator) =>
 {
     var result = await mediator.Send(request);
 
@@ -86,21 +86,21 @@ app.MapPost("/api/create-account", async (RegisterUserRequest request, IMediator
 }).AllowAnonymous()
 .WithTags("Auth");
 
-app.MapGet("/api/auth/users/{id}/email", async (Guid id, IAuthQuery _authQuery) =>
+app.MapGet("auth/users/{id}/email", async (Guid id, IAuthQuery _authQuery) =>
 {
     var response = await _authQuery.GetEmailByUserIdAsync(id);
 
     return Results.Ok(response);
 }).AllowAnonymous().WithTags("Auth");
 
-app.MapDelete("/api/auth/users/{id}", async (Guid id, IMediator mediator) =>
+app.MapDelete("auth/users/{id}", async (Guid id, IMediator mediator) =>
 {
     var response = await mediator.Send(new DeleteUserRequest { Id = id });
 
     return Results.Ok(response);
 }).AllowAnonymous().WithTags("Auth");
 
-app.MapPut("/api/auth/role", async ([FromBody] ChangeUserRoleRequest request, IMediator mediator) =>
+app.MapPut("auth/role", async ([FromBody] ChangeUserRoleRequest request, IMediator mediator) =>
 {
     var response = await mediator.Send(request);
 
@@ -108,7 +108,7 @@ app.MapPut("/api/auth/role", async ([FromBody] ChangeUserRoleRequest request, IM
 }).AllowAnonymous()
 .WithTags("Auth");
 
-app.MapPut("/api/auth/users/{id}/email", async (Guid id, [FromBody] ChangeUserEmailRequest request, IMediator mediator) =>
+app.MapPut("auth/users/{id}/email", async (Guid id, [FromBody] ChangeUserEmailRequest request, IMediator mediator) =>
 {
     request.UserId = id;
 
@@ -118,7 +118,7 @@ app.MapPut("/api/auth/users/{id}/email", async (Guid id, [FromBody] ChangeUserEm
 }).AllowAnonymous()
 .WithTags("Auth");
 
-app.MapPost("/api/login", async (LoginRequest request, IMediator mediator) =>
+app.MapPost("login", async (LoginRequest request, IMediator mediator) =>
 {
     var response = await mediator.Send(request);
 

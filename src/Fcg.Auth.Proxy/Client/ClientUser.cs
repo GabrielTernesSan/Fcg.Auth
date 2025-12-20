@@ -1,19 +1,20 @@
-﻿using Fcg.Auth.Common;
-using Fcg.Auth.Proxy.User.Interface;
-using Fcg.Auth.Proxy.User.Responses;
-using System.Net.Http;
+using Fcg.Auth.Common;
+using Fcg.Auth.Proxy.User.Client.Interface;
+using Fcg.Auth.Proxy.User.Client.Responses;
+using Fcg.Auth.Proxy.User.Configurations;
+using Microsoft.Extensions.Options;
 using System.Text;
 
-namespace Fcg.Auth.Proxy.User
+namespace Fcg.Auth.Proxy.User.Client
 {
     public class ClientUser : IClientUser
     {
         private readonly UserConfiguration _userConfiguration;
         private readonly HttpClient _httpClient;
 
-        public ClientUser(UserConfiguration userConfiguration, HttpClient httpClient)
+        public ClientUser(IOptions<UserConfiguration> userConfiguration, HttpClient httpClient)
         {
-            _userConfiguration = userConfiguration;
+            _userConfiguration = userConfiguration.Value;
             _httpClient = httpClient;
         }
 
@@ -21,18 +22,23 @@ namespace Fcg.Auth.Proxy.User
         {
             var response = new Response<CreateUserResponse?>();
 
-            var url = _userConfiguration.Url;
+            var url = $"{_userConfiguration.Url}/users";
 
-            var request = $@"";
+            var payload = new
+            {
+                id
+            };
 
             try
             {
                 using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, url)
                 {
-                    Content = new StringContent(request, Encoding.UTF8, "text/xml")
+                    Content = new StringContent(
+                        System.Text.Json.JsonSerializer.Serialize(payload),
+                        Encoding.UTF8,
+                        "application/json"
+                    )
                 };
-
-                httpRequestMessage.Headers.Add("SOAPAction");
 
                 var httpResponseMessage = await _httpClient.SendAsync(httpRequestMessage);
 
@@ -42,15 +48,16 @@ namespace Fcg.Auth.Proxy.User
                     var reason = httpResponseMessage.ReasonPhrase ?? "Sem motivo informado";
                     var body = await httpResponseMessage.Content.ReadAsStringAsync();
 
-                    response.AddError($"Erro ao enviar dados ({status} {reason})");
+                    response.AddError($"Erro ao enviar dados ({status} {reason}). Detalhes: {body}");
                     return response;
                 }
 
-                response.Result = await httpResponseMessage.Content.ReadAsStringAsync();
+                var json = await httpResponseMessage.Content.ReadAsStringAsync();
+                response.Result = System.Text.Json.JsonSerializer.Deserialize<CreateUserResponse>(json);
             }
             catch (Exception ex)
             {
-                response.AddError($"Erro ao enviar dados ({ex})");
+                response.AddError($"Erro ao enviar dados ({ex.Message})");
             }
 
             return response;

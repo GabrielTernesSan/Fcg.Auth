@@ -1,4 +1,4 @@
-﻿namespace Fcg.Auth.Proxy.User
+namespace Fcg.Auth.Proxy.User.Configurations
 {
     public class UserConfiguration
     {
