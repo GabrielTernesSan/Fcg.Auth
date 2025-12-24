@@ -128,11 +128,8 @@ app.MapPost("login", async (LoginRequest request, IMediator mediator) =>
 #endregion
 
 #region Middleware Pipeline
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseAuthentication();
 app.UseAuthorization();
