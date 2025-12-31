@@ -76,7 +76,7 @@ builder.Services.AddAuthorization(options =>
 var app = builder.Build();
 
 #region Minimal APIs
-app.MapPost("create-account", async (RegisterUserRequest request, IMediator mediator) =>
+app.MapPost("auth/create-account", async (RegisterUserRequest request, IMediator mediator) =>
 {
     var result = await mediator.Send(request);
 
@@ -118,7 +118,7 @@ app.MapPut("auth/users/{id}/email", async (Guid id, [FromBody] ChangeUserEmailRe
 }).AllowAnonymous()
 .WithTags("Auth");
 
-app.MapPost("login", async (LoginRequest request, IMediator mediator) =>
+app.MapPost("auth/login", async (LoginRequest request, IMediator mediator) =>
 {
     var response = await mediator.Send(request);
 
