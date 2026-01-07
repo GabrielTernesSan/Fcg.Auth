@@ -67,10 +67,8 @@ builder.Services.AddAuthentication("Bearer")
         };
     });
 
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
-});
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
 #endregion
 
 var app = builder.Build();
