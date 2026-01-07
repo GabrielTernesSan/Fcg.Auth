@@ -83,8 +83,15 @@ app.MapPost("auth/create-account", async (RegisterUserRequest request, IMediator
     return result.HasErrors
         ? Results.BadRequest(result)
         : Results.Ok(result);
-}).AllowAnonymous()
-.WithTags("Auth");
+}).AllowAnonymous().WithTags("Auth");
+
+app.MapPost("auth/login", async (LoginRequest request, IMediator mediator) =>
+{
+    var response = await mediator.Send(request);
+
+    return Results.Ok(response);
+})
+.AllowAnonymous();
 
 app.MapGet("auth/users/{id}/email", async (Guid id, IAuthQuery _authQuery) =>
 {
@@ -105,8 +112,7 @@ app.MapPut("auth/role", async ([FromBody] ChangeUserRoleRequest request, IMediat
     var response = await mediator.Send(request);
 
     return Results.Ok(response);
-}).AllowAnonymous()
-.WithTags("Auth");
+}).AllowAnonymous().WithTags("Auth");
 
 app.MapPut("auth/users/{id}/email", async (Guid id, [FromBody] ChangeUserEmailRequest request, IMediator mediator) =>
 {
@@ -115,16 +121,7 @@ app.MapPut("auth/users/{id}/email", async (Guid id, [FromBody] ChangeUserEmailRe
     var response = await mediator.Send(request);
 
     return Results.Ok(response);
-}).AllowAnonymous()
-.WithTags("Auth");
-
-app.MapPost("auth/login", async (LoginRequest request, IMediator mediator) =>
-{
-    var response = await mediator.Send(request);
-
-    return Results.Ok(response);
-})
-.AllowAnonymous();
+}).AllowAnonymous().WithTags("Auth");
 #endregion
 
 #region Middleware Pipeline

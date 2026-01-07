@@ -1,6 +1,5 @@
 using Fcg.Auth.Application.Requests;
 using Fcg.Auth.Application.Responses;
-using Fcg.Auth.Common;
 using Fcg.Auth.Domain.Repositories;
 using MediatR;
 
